@@ -10,7 +10,7 @@ import { UserModule } from './modules/user/user.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    MongooseModule.forRoot('mongodb+srv://soma:529145nktl@database.fsldwif.mongodb.net/?retryWrites=true&w=majority'),
     UserModule,
     RatingModule,
   ],
