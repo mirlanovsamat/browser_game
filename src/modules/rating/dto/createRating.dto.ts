@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/models/user.model';
 
 export class CreateRatingDto{
     

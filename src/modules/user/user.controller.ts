@@ -11,17 +11,17 @@ export class UserController {
 
   @Get('get-all')
   async getAll() {
-    return this.userService.getAll()
+    return this.userService.findAll()
   }
 
   @Post('create')
   async createUser(@Body() body: CreateUserDto ) {
-    return this.userService.createUser(body)
+    return this.userService.create(body)
   }
 
   @Post('create/rating')
-  async createRating(@Body() body: CreateRatingDto ) {
-    return this.userService.updateRating(body)
+  async createRating(@Body() body: CreateRatingDto ): Promise<any> {
+    return this.userService.createRating(body)
   }
 
 }

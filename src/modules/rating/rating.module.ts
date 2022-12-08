@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose'
 import { RatingService } from './rating.service';
 import { RatingController } from './rating.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Rating } from 'src/entities/rating.entity';
+import { Rating, RatingSchema } from 'src/models/rating.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Rating])
+    MongooseModule.forFeature([{name: Rating.name, schema: RatingSchema}]),
   ],
   controllers: [
     RatingController

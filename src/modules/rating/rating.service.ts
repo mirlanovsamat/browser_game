@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Rating } from 'src/entities/rating.entity';
-import { Repository } from 'typeorm';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Rating, RatingDocument } from 'src/models/rating.model';
 import { CreateRatingDto } from './dto/createRating.dto';
 
 @Injectable()
 export class RatingService {
     constructor(
-    @InjectRepository(Rating)
-        private readonly ratingRepository: Repository<Rating>
+        @InjectModel(Rating.name) 
+        private ratingModel: Model<RatingDocument>
     ){};
 
-    async createRating(createRatingDto: CreateRatingDto) {
-        return this.ratingRepository.save(createRatingDto)
+    async create(createRatingDto: CreateRatingDto): Promise<Rating> {
+        const createdCat = await this.ratingModel.create(createRatingDto);
+        return createdCat
     }
 }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { RatingModule } from './modules/rating/rating.module';
-import DatabaseModule from './configuration/database/typeorm.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -10,7 +10,7 @@ import { UserModule } from './modules/user/user.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    DatabaseModule,
+    MongooseModule.forRoot(process.env.MONGO_URI),
     UserModule,
     RatingModule,
   ],
