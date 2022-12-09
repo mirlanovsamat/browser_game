@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import DatabaseModule from './configuration/database/database.module';
 import { RatingModule } from './modules/rating/rating.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -10,7 +10,7 @@ import { UserModule } from './modules/user/user.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb+srv://soma:529145nktl@database.fsldwif.mongodb.net/?retryWrites=true&w=majority'),
+    DatabaseModule,
     UserModule,
     RatingModule,
   ],
