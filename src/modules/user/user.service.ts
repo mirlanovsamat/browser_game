@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ArrayContains, MoreThan, Not, Repository } from 'typeorm';
 import { CreateRatingDto } from '../rating/dto/createRating.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { RatingService } from '../rating/rating.service';
@@ -22,12 +22,28 @@ export class UserService {
            return error
         }
     }
+    async find(query): Promise<User[]> {
+        try {
+            const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
+            const users = await this.userRepository.find(
+                {
+                    order: { record: {record: "DESC"} },
+                    take: query.take,
+                    skip: skip || 0,
+                }
+            );
+            return users
+        } catch (error) {
+            return error
+        }
+    }
 
     async findAll(query): Promise<User[]> {
         try {
             const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
             const users = await this.userRepository.find(
                 {
+                    where: { record: MoreThan(0)},
                     order: { record: {record: "DESC"} },
                     take: query.take,
                     skip: skip || 0,

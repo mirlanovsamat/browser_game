@@ -9,6 +9,11 @@ export class UserController {
     private readonly userService:UserService
   ) {}
 
+  @Get('find-all')
+  async findAll(@Query() query) {
+    return this.userService.find(query)
+  }
+
   @Get('get-all')
   async getAll(@Query() query) {
     return this.userService.findAll(query)
