@@ -3,7 +3,6 @@ import { User } from 'src/entities/user.entity';
 
 export class CreateRatingDto{
     
-    @IsString()
     @IsNotEmpty()
     record: number;
 
