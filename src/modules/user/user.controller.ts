@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CreateRatingDto } from '../rating/dto/createRating.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
@@ -10,8 +10,8 @@ export class UserController {
   ) {}
 
   @Get('get-all')
-  async getAll() {
-    return this.userService.findAll()
+  async getAll(@Query() query) {
+    return this.userService.findAll(query)
   }
 
   @Post('create')

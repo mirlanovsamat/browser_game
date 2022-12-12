@@ -19,4 +19,23 @@ export class RatingService {
             return error
         }
     }
+
+    async findAll(query) {
+        try {
+            const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
+            const [ result, total ] = await this.ratingRepository.findAndCount(
+                {
+                    order: { record: "DESC" },
+                    take: query.take,
+                    skip: skip || 0,
+                    relations: ['user']
+                })
+            return {
+                result: result,
+                count: total
+            }
+        } catch (error) {
+            return error
+        }
+    }
 }

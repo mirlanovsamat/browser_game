@@ -23,9 +23,17 @@ export class UserService {
         }
     }
 
-    async findAll(): Promise<User[]> {
+    async findAll(query): Promise<User[]> {
         try {
-            const users = await this.userRepository.find({relations: ['record']});
+            const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
+            const users = await this.userRepository.find(
+                {
+                    order: { record: {record: "DESC"} },
+                    take: query.take,
+                    skip: skip || 0,
+                    relations: ['record']
+                }
+            );
             return users
         } catch (error) {
             return error
