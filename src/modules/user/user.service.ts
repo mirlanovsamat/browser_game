@@ -19,7 +19,7 @@ export class UserService {
             const user = await this.userRepository.save(createUserDto)
             return user
         } catch (error) {
-           
+           return error
         }
     }
 
