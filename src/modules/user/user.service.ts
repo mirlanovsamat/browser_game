@@ -64,4 +64,23 @@ export class UserService {
             return error
         }
     }
+
+    async updateUser(email: string, options) {
+        const result =  await this.userRepository.createQueryBuilder()
+          .update(User)
+          .set({ ...options })
+          .where("email = :email", { email: email })
+          .returning('*')
+          .execute()
+        return result.raw[0]
+    }
+
+    async getBy({ key, value }): Promise<User> {
+        return this.userRepository
+          .createQueryBuilder('user')
+          .where(`user.${ key } = :${ key }`, { [key]: value })
+          .getOne();
+    }
+    
+    
 }
