@@ -92,12 +92,12 @@ import { randomIntFromInterval, getData, validateEmail } from './websocket.util'
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
         client.sendMessage({message: 'Start'});
-        client.sendMessage({data: getData(payload), message: 'targets', record: client.record })
         setTimeout(async () => {
             await this.userService.create({name: client.name, email: client.email, record: client.record})
             client.status = false;
             client.sendMessage({message: 'End'})
         }, 60000)
+        client.sendMessage({data: getData(payload), message: 'targets', record: client.record })
     }
 
     @SubscribeMessage('record')
