@@ -88,7 +88,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
         client.sendMessage({message: 'Start'});
-        client.sendMessage({data: getData(payload)})
+        client.sendMessage({data: getData(payload), message: 'targets' })
         setTimeout(async () => {
             await this.userService.create({name: client.name, email: client.email, record: client.record})
             client.status = false;
@@ -110,7 +110,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
         if (payload && !payload.enemy ) {
             client.record -= 5
         }
-        return client.sendMessage({data: getData(payload), message: client.record})
+        return client.sendMessage({data: getData(payload), message: 'targets', record: client.record})
     }
 }
 
