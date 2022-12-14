@@ -26,6 +26,7 @@ import { getData, randomIntFromInterval } from './websocket.util';
   }
   
   @WebSocketGateway({
+    path: '/api/ws',
     cors: {
       origin: '*',
     },
