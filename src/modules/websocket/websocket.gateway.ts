@@ -15,7 +15,7 @@ import { Logger, UseFilters } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { WebsocketExceptionsFilter } from './websocketExceptions';
 import { omitNullAndUndefinedValues } from 'src/shared/functions';
-import { getData } from './websocket.util';
+import { getData, randomIntFromInterval } from './websocket.util';
   
   export interface WsClient extends WebSocket {
     id: string;
@@ -98,7 +98,7 @@ import { getData } from './websocket.util';
             return client.sendMessage({message: 'Your game is over'})
         }
         if (payload && payload.enemy) {
-            client.record += 5
+            client.record += randomIntFromInterval(5, 8)
         } 
         if (payload && !payload.enemy ) {
             client.record -= 5
