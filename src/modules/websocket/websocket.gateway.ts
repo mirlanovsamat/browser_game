@@ -51,7 +51,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
 
         try {
             client.id = uuid();
-            client.record = 100;
+            client.record = 0;
             client.status = true;
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
@@ -73,7 +73,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
-        if (!payload.email) {
+        if (!payload.email || !payload.name ) {
             client.sendMessage({message: 'Email or Name is not provided'})
             return client.close()
         };
@@ -88,7 +88,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
         client.sendMessage({message: 'Start'});
-        client.sendMessage({data: getData(payload), message: 'targets' })
+        client.sendMessage({data: getData(payload), message: 'targets', record: client.record })
         setTimeout(async () => {
             await this.userService.create({name: client.name, email: client.email, record: client.record})
             client.status = false;
@@ -105,10 +105,10 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
             return client.sendMessage({message: 'Your game is over'})
         }
         if (payload && payload.enemy) {
-            client.record += randomIntFromInterval(5, 8)
+            client.record += randomIntFromInterval(6, 8)
         } 
         if (payload && !payload.enemy ) {
-            client.record -= 5
+            client.record -= randomIntFromInterval(6, 8)
         }
         return client.sendMessage({data: getData(payload), message: 'targets', record: client.record})
     }
