@@ -55,9 +55,10 @@ import { getData, randomIntFromInterval } from './websocket.util';
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
             };
-            client.email = req.headers['email'];
+            client.email = req.headers['sec-websocket-protocol'];
             if (!client.email) {
-                client.send('Email is not provided')
+                client.sendMessage({message: 'Email is not provided'})
+                return client.close()
             };
             this.connectedClients.set(client.id, client)
             this.logger.log(`Client connected: ${ client.id }`);
