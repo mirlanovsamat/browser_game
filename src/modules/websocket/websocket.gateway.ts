@@ -15,7 +15,7 @@ import { Logger, UseFilters } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { WebsocketExceptionsFilter } from './websocketExceptions';
 import { omitNullAndUndefinedValues } from 'src/shared/functions';
-import { getData, randomIntFromInterval } from './websocket.util';
+import { getData } from './websocket.util';
   
   export interface WsClient extends WebSocket {
     id: string;
@@ -48,7 +48,7 @@ import { getData, randomIntFromInterval } from './websocket.util';
 
         try {
             client.id = uuid();
-            client.record = 0
+            client.record = 100;
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
             };
@@ -72,27 +72,19 @@ import { getData, randomIntFromInterval } from './websocket.util';
     
     @SubscribeMessage('start')
     async startGame(
+        @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
-        this.connectedClients.forEach(cl => {
-            if (cl.id === client.id){
-                client.send('Игра началась');
-                let timer = setInterval(() =>  
-                    client.sendMessage({
-                        data: getData()
-                }), randomIntFromInterval(8000, 9000));
-
-                setTimeout(async () => { 
-                    clearInterval(timer);  
-                    client.send('Игра закончена');
-                    const user = await this.userService.getBy({key: 'email', value: client.email});
-                    await this.userService.createRating({
-                        user: user, 
-                        record: client.record
-                    })
-                }, 30000);
-            }
-        });
+        client.sendMessage({message: 'Игра началась'});
+        client.sendMessage({data: getData(payload)})
+        setTimeout(async () => {
+            const user = await this.userService.getBy({key: 'email', value: client.email});
+            await this.userService.createRating({
+                user: user, 
+                record: client.record
+            })
+            return client.close()
+        }, 60300)
     }
 
     @SubscribeMessage('record')
@@ -100,13 +92,13 @@ import { getData, randomIntFromInterval } from './websocket.util';
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {
-        client.record += payload.points;
-        this.connectedClients.forEach(cl => {
-            if (cl.id === client.id){
-                client.send(client.record)
-            }
-        })
-        return
+        if (payload.enemy) {
+            client.record += 5
+        } 
+        if (!payload.enemy) {
+            client.record -= 5
+        }
+        return client.sendMessage({data: getData(payload), record: client.record})
     }
 }
 

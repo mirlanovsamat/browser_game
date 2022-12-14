@@ -5,39 +5,28 @@ export const randomIntFromInterval = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export const randomInterval = (callback, min, max) => {
-    let timeout;
-
-    const randomNum = (max, min = 0) => Math.random() * (max - min) + min;
-
-    const stop = () => clearTimeout(timeout)
-
-    const tick = () => {
-        let time = randomNum(min, max);
-        stop();
-
-        timeout = setTimeout(() => {
-            tick();
-            callback && typeof callback === "function" && callback(stop);
-        }, time)
+export const getData = (data) => {
+    const pos = positions;
+    if (data && data.position) {
+        const index = pos.indexOf(data.position);
+        pos.splice(index, 1);
     }
-
-    tick();
-}
-
-export const getData = () => {
     const first = {
-        position: positions[Math.floor(Math.random()*positions.length)],
+        position: pos[Math.floor(Math.random()*pos.length)],
         target: targets[Math.floor(Math.random()*targets.length)],
         enemy:  Math.random() >= 0.5
     }
 
     const second = {
-        position: positions[Math.floor(Math.random()*positions.length)],
+        position: pos[Math.floor(Math.random()*pos.length)],
         target: targets[Math.floor(Math.random()*targets.length)],
-        enemy:  Math.random() < 0.5
+        enemy:  Math.random() >= 0.5
     }
-    const random = randomIntFromInterval(1, 3)
+    let random = randomIntFromInterval(1, 3)
+    if (data && data.position) {
+        pos.push(data.position);
+        random = 2
+    }
 
     if (random === 1) {
         return [first, second]
