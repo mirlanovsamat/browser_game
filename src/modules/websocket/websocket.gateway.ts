@@ -22,6 +22,7 @@ import { getData } from './websocket.util';
     email: string | string[];
     sendMessage: (message) => void;
     record: number;
+    status: boolean;
   }
   
   @WebSocketGateway({
@@ -49,13 +50,13 @@ import { getData } from './websocket.util';
         try {
             client.id = uuid();
             client.record = 100;
+            client.status = true;
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
             };
             client.email = req.headers['email'];
             if (!client.email) {
                 client.send('Email is not provided')
-                return client.close()
             };
             this.connectedClients.set(client.id, client)
             this.logger.log(`Client connected: ${ client.id }`);
@@ -75,7 +76,7 @@ import { getData } from './websocket.util';
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
-        client.sendMessage({message: 'Игра началась'});
+        client.sendMessage({message: 'Start'});
         client.sendMessage({data: getData(payload)})
         setTimeout(async () => {
             const user = await this.userService.getBy({key: 'email', value: client.email});
@@ -83,8 +84,9 @@ import { getData } from './websocket.util';
                 user: user, 
                 record: client.record
             })
-            return client.close()
-        }, 60300)
+            client.status = false;
+            client.sendMessage({message: 'End'})
+        }, 10300)
     }
 
     @SubscribeMessage('record')
@@ -92,13 +94,16 @@ import { getData } from './websocket.util';
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {
-        if (payload.enemy) {
+        if(!client.status) {
+            return client.sendMessage({message: 'Your game is over'})
+        }
+        if (payload && payload.enemy) {
             client.record += 5
         } 
-        if (!payload.enemy) {
+        if (payload && !payload.enemy ) {
             client.record -= 5
         }
-        return client.sendMessage({data: getData(payload), record: client.record})
+        return client.sendMessage({data: getData(payload), message: client.record})
     }
 }
 
