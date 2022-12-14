@@ -1,17 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ArrayContains, MoreThan, Not, Repository } from 'typeorm';
-import { CreateRatingDto } from '../rating/dto/createRating.dto';
+import { MoreThan, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
-import { RatingService } from '../rating/rating.service';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-        private readonly ratingService: RatingService,
     ){};
 
     async create(createUserDto: CreateUserDto): Promise<User> {
@@ -27,7 +24,7 @@ export class UserService {
             const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
             const users = await this.userRepository.find(
                 {
-                    order: { record: {record: "DESC"} },
+                    order: { record: "DESC" },
                     take: query.take,
                     skip: skip || 0,
                 }
@@ -44,22 +41,12 @@ export class UserService {
             const users = await this.userRepository.find(
                 {
                     where: { record: MoreThan(0)},
-                    order: { record: {record: "DESC"} },
+                    order: { record: "DESC" },
                     take: query.take,
-                    skip: skip || 0,
-                    relations: ['record']
+                    skip: skip || 0
                 }
             );
             return users
-        } catch (error) {
-            return error
-        }
-    }
-
-    async createRating(createRatingDto: CreateRatingDto): Promise<any> {
-        try {
-            const rating = await this.ratingService.create(createRatingDto)
-            return rating
         } catch (error) {
             return error
         }

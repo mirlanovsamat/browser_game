@@ -15,10 +15,11 @@ import { Logger, UseFilters } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { WebsocketExceptionsFilter } from './websocketExceptions';
 import { omitNullAndUndefinedValues } from 'src/shared/functions';
-import { getData, randomIntFromInterval } from './websocket.util';
+import { randomIntFromInterval, getData, players } from './websocket.util';
   
   export interface WsClient extends WebSocket {
     id: string;
+    name: string;
     email: string | string[];
     sendMessage: (message) => void;
     record: number;
@@ -73,11 +74,12 @@ import { getData, randomIntFromInterval } from './websocket.util';
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {  
         if (!payload.email) {
-            client.sendMessage({message: 'Email is not provided'})
+            client.sendMessage({message: 'Email or Name is not provided'})
             return client.close()
         };
         client.email = payload.email
-        return client.sendMessage({message: client.email})
+        client.name = payload.name
+        return client.sendMessage({message: 'Data saved'})
     }
     
     @SubscribeMessage('start')
@@ -88,11 +90,7 @@ import { getData, randomIntFromInterval } from './websocket.util';
         client.sendMessage({message: 'Start'});
         client.sendMessage({data: getData(payload)})
         setTimeout(async () => {
-            const user = await this.userService.getBy({key: 'email', value: client.email});
-            await this.userService.createRating({
-                user: user, 
-                record: client.record
-            })
+            await this.userService.create({name: client.name, email: client.email, record: client.record})
             client.status = false;
             client.sendMessage({message: 'End'})
         }, 60300)

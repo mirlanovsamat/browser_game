@@ -36,4 +36,5 @@ export const getData = (data) => {
 
 }
 
+export const players = []
 
