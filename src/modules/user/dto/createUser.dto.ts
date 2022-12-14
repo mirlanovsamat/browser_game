@@ -10,7 +10,7 @@ export class CreateUserDto{
 
     @IsEmail()
     @IsNotEmpty()
-    email
+    email: string
 
     @IsNumber()
     @IsNotEmpty()

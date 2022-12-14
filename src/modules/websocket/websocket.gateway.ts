@@ -15,12 +15,12 @@ import { Logger, UseFilters } from '@nestjs/common';
 import { IncomingMessage } from 'http';
 import { WebsocketExceptionsFilter } from './websocketExceptions';
 import { omitNullAndUndefinedValues } from 'src/shared/functions';
-import { randomIntFromInterval, getData, players } from './websocket.util';
+import { randomIntFromInterval, getData, validateEmail } from './websocket.util';
   
   export interface WsClient extends WebSocket {
     id: string;
     name: string;
-    email: string | string[];
+    email: string;
     sendMessage: (message) => void;
     record: number;
     status: boolean;
@@ -73,6 +73,10 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> { 
+        if (!validateEmail(payload.email)) {
+            client.sendMessage({message: 'Email is not valid'})
+            return client.close()
+        }
         if (!payload.email || !payload.name ) {
             client.sendMessage({message: 'Email or Name is not provided'})
             return client.close()
@@ -93,7 +97,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
             await this.userService.create({name: client.name, email: client.email, record: client.record})
             client.status = false;
             client.sendMessage({message: 'End'})
-        }, 60300)
+        }, 60000)
     }
 
     @SubscribeMessage('record')
