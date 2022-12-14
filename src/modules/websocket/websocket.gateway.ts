@@ -86,7 +86,7 @@ import { getData } from './websocket.util';
             })
             client.status = false;
             client.sendMessage({message: 'End'})
-        }, 10300)
+        }, 60300)
     }
 
     @SubscribeMessage('record')
