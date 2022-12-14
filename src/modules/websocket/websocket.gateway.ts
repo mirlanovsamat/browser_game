@@ -55,11 +55,6 @@ import { getData, randomIntFromInterval } from './websocket.util';
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
             };
-            client.email = req.headers['sec-websocket-protocol'];
-            if (!client.email) {
-                client.sendMessage({message: 'Email is not provided'})
-                return client.close()
-            };
             this.connectedClients.set(client.id, client)
             this.logger.log(`Client connected: ${ client.id }`);
         } catch (error) {
@@ -71,7 +66,19 @@ import { getData, randomIntFromInterval } from './websocket.util';
         this.connectedClients.delete(client.id);
         this.logger.log(`Client disconnected: ${ client.id }`);
     }
-  
+    
+    @SubscribeMessage('email')
+    async email(
+        @MessageBody() payload,
+        @ConnectedSocket() client: WsClient,
+    ): Promise<void> {  
+        if (!payload.email) {
+            client.sendMessage({message: 'Email is not provided'})
+            return client.close()
+        };
+        client.email = payload.email
+        return client.sendMessage({message: client.email})
+    }
     
     @SubscribeMessage('start')
     async startGame(
