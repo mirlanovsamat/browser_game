@@ -72,7 +72,7 @@ import { randomIntFromInterval, getData, players } from './websocket.util';
     async email(
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
-    ): Promise<void> {  
+    ): Promise<void> { 
         if (!payload.email || !payload.name ) {
             client.sendMessage({message: 'Email or Name is not provided'})
             return client.close()

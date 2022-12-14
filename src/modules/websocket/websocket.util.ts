@@ -14,13 +14,13 @@ export const getData = (data) => {
     const first = {
         position: pos[Math.floor(Math.random()*pos.length)],
         target: targets[Math.floor(Math.random()*targets.length)],
-        enemy:  Math.random() >= 0.5
+        enemy:  Math.random() >= 0.2
     }
 
     const second = {
         position: pos[Math.floor(Math.random()*pos.length)],
         target: targets[Math.floor(Math.random()*targets.length)],
-        enemy:  Math.random() >= 0.5
+        enemy:  true
     }
     let random = randomIntFromInterval(1, 3)
     if (data && data.position) {
