@@ -1,4 +1,4 @@
-export const positions = ['twentyth', 'second', 'ninth', 'tenth', 'sixth', 'seventh', 'third', 'eighth', 'first', 'fifth'];
+export const positions = [ 'fifth', 'first' , 'eighth', 'third', 'seventh', 'sixth', 'tenth', 'ninth'];
 export const targets = ['spiderman', 'batman', 'superman', 'wolverine', 'subziro', 'ironman' ];
 
 export const randomIntFromInterval = (min, max) => {
