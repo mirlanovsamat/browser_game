@@ -23,7 +23,6 @@ import { randomIntFromInterval, getData, validateEmail } from './websocket.util'
     email: string;
     sendMessage: (message) => void;
     record: number;
-    status: boolean;
   }
   
   @WebSocketGateway({
@@ -52,7 +51,6 @@ import { randomIntFromInterval, getData, validateEmail } from './websocket.util'
         try {
             client.id = uuid();
             client.record = 0;
-            client.status = true;
             client.sendMessage = function (message) {
                 client.send(JSON.stringify(omitNullAndUndefinedValues(message)));
             };
@@ -94,8 +92,8 @@ import { randomIntFromInterval, getData, validateEmail } from './websocket.util'
         client.sendMessage({message: 'Start'});
         setTimeout(async () => {
             await this.userService.create({name: client.name, email: client.email, record: client.record})
-            client.status = false;
             client.sendMessage({message: 'End'})
+            return client.close()
         }, 60000)
         client.sendMessage({data: getData(payload), message: 'targets', record: client.record })
     }
@@ -105,9 +103,6 @@ import { randomIntFromInterval, getData, validateEmail } from './websocket.util'
         @MessageBody() payload,
         @ConnectedSocket() client: WsClient,
     ): Promise<void> {
-        if(!client.status) {
-            return client.sendMessage({message: 'Your game is over'})
-        }
         if (payload && payload.enemy) {
             client.record += randomIntFromInterval(6, 8)
         } 
