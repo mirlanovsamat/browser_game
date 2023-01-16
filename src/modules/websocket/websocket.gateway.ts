@@ -46,12 +46,14 @@ export class WebsocketGateway
 
   constructor(private readonly userService: UserService) {}
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterInit(server: Server): void {
     this.logger.log('Initialized!');
   }
 
   async handleConnection(
     client: WsClient,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     req: IncomingMessage,
   ): Promise<void> {
     try {
