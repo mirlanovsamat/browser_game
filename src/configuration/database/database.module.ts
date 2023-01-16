@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
- 
+
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         synchronize: true,
         migrations: ['dist/migrations/*{.ts,.js}'],
         cli: {
-            migrationsDir: 'src/migrations',
+          migrationsDir: 'src/migrations',
         },
         migrationsRun: false,
         migrationsTableName: 'migrations',
@@ -28,5 +28,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
 })
 class DatabaseModule {}
- 
+
 export default DatabaseModule;

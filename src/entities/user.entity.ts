@@ -3,20 +3,18 @@ import { BaseEntity } from './base.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
-
-  @Column({ 
+  @Column({
     nullable: false,
   })
   name: string;
 
-  @Column({ 
+  @Column({
     nullable: false,
   })
   email: string;
-  
-  @Column({ 
+
+  @Column({
     nullable: false,
   })
   record: number;
-
 }

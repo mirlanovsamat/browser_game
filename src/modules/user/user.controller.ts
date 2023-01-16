@@ -4,23 +4,20 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService:UserService
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('find-all')
   async findAll(@Query() query) {
-    return this.userService.find(query)
+    return this.userService.find(query);
   }
 
   @Get('get-all')
   async getAll(@Query() query) {
-    return this.userService.findAll(query)
+    return this.userService.findAll(query);
   }
 
   @Post('create')
-  async createUser(@Body() body: CreateUserDto ) {
-    return this.userService.create(body)
+  async createUser(@Body() body: CreateUserDto) {
+    return this.userService.create(body);
   }
-
 }
