@@ -44,7 +44,7 @@ export class UserService {
       // });
 
       const users = await this.userRepository.query(
-        `SELECT users.name, users.email, MAX(users.record)
+        `SELECT users.name, users.email, MAX(users.record) AS record
         FROM users
         WHERE record > 0
         GROUP BY users.email, users.name
