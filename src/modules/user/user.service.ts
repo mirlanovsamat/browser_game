@@ -54,7 +54,9 @@ export class UserService {
         `
       )
 
-      return users;
+      const result = users.filter((item, index) => index === users.map((el) => el.email).indexOf(item.email));
+
+      return result;
     } catch (error) {
       return error;
     }
