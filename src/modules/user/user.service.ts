@@ -36,12 +36,24 @@ export class UserService {
   async findAll(query): Promise<User[]> {
     try {
       const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
-      const users = await this.userRepository.find({
-        where: { record: MoreThan(0) },
-        order: { record: 'DESC' },
-        take: query.take,
-        skip: skip || 0,
-      });
+      // const users = await this.userRepository.find({
+      //   where: { record: MoreThan(0) },
+      //   order: { record: 'DESC' },
+      //   take: query.take,
+      //   skip: skip || 0,
+      // });
+
+      const users = await this.userRepository.query(
+        `SELECT users.name, users.email, MAX(users.record)
+        FROM users
+        WHERE record > 0
+        GROUP BY users.email, users.name
+        ORDER BY MAX(users.record) DESC
+        LIMIT ${query.take || 10}
+        OFFSET ${skip || 0}
+        `
+      )
+
       return users;
     } catch (error) {
       return error;
