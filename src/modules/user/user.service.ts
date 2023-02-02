@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 
 @Injectable()
@@ -33,19 +33,20 @@ export class UserService {
     }
   }
 
+
+
   async findAll(query): Promise<User[]> {
+    const date = new Date('2023-02-03');
     try {
       const skip = query.page === 1 ? 0 : (query.page - 1) * query.take;
       const users = await this.userRepository.find({
-        where: { record: MoreThan(0) },
+        where: { createDate: LessThan(date) },
         order: { record: 'DESC' },
-        take: 10,
         skip: skip || 0,
       });
 
       const result = users.filter(
-        (item, index) => index === users.map((el) => el.email).indexOf(item.email)
-          && item.createDate.getTime() < new Date(query?.time || '2023-02-01').getTime());
+        (item, index) => index === users.map((el) => el.email).indexOf(item.email));
 
       return result;
     } catch (error) {
