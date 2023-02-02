@@ -39,13 +39,13 @@ export class UserService {
       const users = await this.userRepository.find({
         where: { record: MoreThan(0) },
         order: { record: 'DESC' },
-        take: query.take,
+        take: 10,
         skip: skip || 0,
       });
 
       const result = users.filter(
         (item, index) => index === users.map((el) => el.email).indexOf(item.email)
-          && item.createDate.getTime() < new Date(query?.time || '2023-01-01').getTime());
+          && item.createDate.getTime() < new Date(query?.time || '2023-02-01').getTime());
 
       return result;
     } catch (error) {
