@@ -45,10 +45,21 @@ export class UserService {
         skip: skip || 0,
       });
 
-      const result = users.filter(
-        (item, index) => index === users.map((el) => el.email).indexOf(item.email)).slice(0, 11);
+      // const result = users.filter(
+      //   (item, index) => index === users.map((el) => el.email).indexOf(item.email)).slice(0, 10);
 
-      return result;
+      const test = await this.userRepository.query(
+        `SELECT users.name, users.email, MAX(users.record) AS record
+        FROM users
+        WHERE record > 0 AND 'createDate' > '2023-02-01'
+        GROUP BY users.email, users.name
+        ORDER BY MAX(users.record) DESC
+        LIMIT ${query.take || 10}
+        OFFSET ${skip || 0}
+        `
+      )
+
+      return test;
     } catch (error) {
       return error;
     }
